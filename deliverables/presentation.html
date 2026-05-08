@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Werkstatt AI - Modul 2 MLOps Capstone</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    background: #0f172a; color: #e2e8f0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.7; min-height: 100vh;
+  }
+  nav {
+    position: sticky; top: 0; z-index: 1000;
+    background: #0f172aee; backdrop-filter: blur(12px);
+    border-bottom: 1px solid #1e293b; padding: 0.5rem 0;
+    overflow-x: auto; white-space: nowrap;
+  }
+  nav .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 1rem; display: flex; gap: 0.15rem; align-items: center; }
+  nav a { color: #94a3b8; text-decoration: none; font-size: 0.78rem; padding: 0.4rem 0.65rem; border-radius: 6px; transition: all 0.2s; flex-shrink: 0; }
+  nav a:hover, nav a:focus { color: #38bdf8; background: #1e293b; }
+  nav .nav-title { color: #38bdf8; font-weight: 700; font-size: 0.85rem; margin-right: 0.6rem; flex-shrink: 0; }
+  main { max-width: 1100px; margin: 0 auto; padding: 1.2rem 1.6rem 4rem; }
+  section { margin-bottom: 4rem; padding-top: 3.5rem; }
+  section:first-of-type { padding-top: 1rem; }
+  h1 {
+    font-size: 2.5rem; font-weight: 800; line-height: 1.2;
+    background: linear-gradient(135deg, #38bdf8, #a78bfa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 0.6rem;
+  }
+  .subtitle { color: #94a3b8; font-size: 1.05rem; margin-bottom: 1.4rem; }
+  h2 {
+    font-size: 1.7rem; font-weight: 700; color: #38bdf8;
+    margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid #1e293b;
+  }
+  h3 { font-size: 1.18rem; font-weight: 600; margin: 1.4rem 0 0.6rem; color: #a78bfa; }
+  p { margin-bottom: 0.9rem; }
+  ul, ol { margin: 0.5rem 0 1rem 1.6rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { color: #f8fafc; }
+  a { color: #38bdf8; text-decoration: none; border-bottom: 1px dashed #1e293b; }
+  a:hover { color: #a78bfa; border-bottom-color: #a78bfa; }
+  .box { border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1rem 0 1.2rem; }
+  .box-pink   { background: #f472b610; border-left: 4px solid #f472b6; }
+  .box-green  { background: #34d39910; border-left: 4px solid #34d399; }
+  .box-blue   { background: #38bdf810; border-left: 4px solid #38bdf8; }
+  .box-purple { background: #a78bfa10; border-left: 4px solid #a78bfa; }
+  .box-amber  { background: #fbbf2410; border-left: 4px solid #fbbf24; }
+  pre { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.1rem 1.3rem; overflow-x: auto; margin: 0.8rem 0 1.2rem; }
+  pre code { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.85rem; line-height: 1.6; color: #e2e8f0; }
+  p code, li code, td code { background: #1e293b; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.88em; color: #38bdf8; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.92rem; }
+  th, td { padding: 0.6rem 0.9rem; text-align: left; border-bottom: 1px solid #1e293b; }
+  th { background: #1e293b; color: #38bdf8; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:hover { background: #1e293b40; }
+  .hero {
+    background: linear-gradient(135deg, #0f172a, #1e293b 60%, #0f172a);
+    padding: 3rem 2rem; border-radius: 16px; margin-bottom: 2rem;
+    border: 1px solid #334155; text-align: left;
+  }
+  .hero .meta { color: #94a3b8; font-size: 0.95rem; margin-top: 1rem; }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin-top: 1rem; }
+  .meta-grid .item { background: #1e293b; padding: 0.7rem 0.9rem; border-radius: 8px; border-left: 3px solid #38bdf8; }
+  .meta-grid .item .lbl { display: block; font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.2rem; }
+  .meta-grid .item .val { font-weight: 700; color: #e2e8f0; font-size: 0.95rem; }
+  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0 1.5rem; }
+  .module-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.1rem 1.2rem; }
+  .module-card h4 { color: #a78bfa; font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .module-card .tag { display: inline-block; font-size: 0.72rem; color: #38bdf8; background: #38bdf820; padding: 0.15rem 0.5rem; border-radius: 4px; margin-right: 0.3rem; }
+  .ascii { background: #0a0f1d; border: 1px solid #1e293b; border-radius: 8px; padding: 1rem; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.78rem; line-height: 1.4; color: #94a3b8; white-space: pre; }
+  footer { text-align: center; color: #64748b; font-size: 0.85rem; padding: 2rem 1rem; border-top: 1px solid #1e293b; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<nav><div class="nav-inner">
+  <span class="nav-title">Project 22: Werkstatt AI</span>
+  <a href="#overview">Overview</a>
+  <a href="#modules">Federated Modules</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#contract">Contract</a>
+  <a href="#drift">Drift Loop</a>
+  <a href="#cost">Cost</a>
+  <a href="#timeline">Timeline</a>
+  <a href="#refs">References</a>
+</div></nav>
+<main>
+
+<section id="overview" class="hero">
+  <h1>Werkstatt AI</h1>
+  <div class="subtitle">A federated MLOps platform productionising three already-trained ML modules behind one control plane. Liora Modul 2 capstone, cohort 6974, deadline 26 October 2026.</div>
+  <div class="meta-grid">
+    <div class="item"><span class="lbl">Module</span><span class="val">Modul 2 (MLOps), 266 UE</span></div>
+    <div class="item"><span class="lbl">Pattern</span><span class="val">Federation, not unification</span></div>
+    <div class="item"><span class="lbl">Modules</span><span class="val">3 (CSAT, Catalogue, Anomaly)</span></div>
+    <div class="item"><span class="lbl">Cost ceiling</span><span class="val">EUR 200 / month</span></div>
+    <div class="item"><span class="lbl">Verified refs</span><span class="val">27 (CrossRef live)</span></div>
+    <div class="item"><span class="lbl">Deadline</span><span class="val">26 Oct 2026</span></div>
+  </div>
+</section>
+
+<section id="problem">
+  <h2>1. Problem and Motivation</h2>
+  <p>Mittelstand workshops in the DACH region rarely run production machine learning, even though they hold three classes of data that an ML system can act on every day: customer reviews, product catalogues, and quality-control camera feeds. The blocker is the operational layer: registering, serving, monitoring, retraining, and isolating models across tenants. Werkstatt AI delivers that layer as a single platform, federating three Liora projects that each solve a real workshop-floor question.</p>
+  <div class="box box-blue">
+    <strong>Capstone bet.</strong> Modul 2 is graded on MLOps competency, not on a fourth ML model. Building one more model adds no new evidence; productionising three exercises every Modul 2 learning objective in one deliverable.
+  </div>
+</section>
+
+<section id="modules">
+  <h2>2. Federated Modules</h2>
+  <div class="module-grid">
+    <div class="module-card">
+      <span class="tag">Tier 1 CPU</span><span class="tag">Tabular</span>
+      <h4>Module A: Customer Satisfaction</h4>
+      <p>Source: project #2 Olist (<code>02_supply_chain_csat</code>). Binary classifier on post-purchase tabular data. Answers "is this customer about to leave a bad review?".</p>
+      <p><strong>Latency budget:</strong> 200 ms p95.</p>
+    </div>
+    <div class="module-card">
+      <span class="tag">Tier 2 GPU</span><span class="tag">Multimodal</span>
+      <h4>Module B: Catalogue</h4>
+      <p>Source: project #6 Rakuten (<code>06_rakuten_multimodal</code>). Late-fusion vision plus text classifier. Answers "what is this part?" from a phone photo plus a title.</p>
+      <p><strong>Latency budget:</strong> 800 ms p95.</p>
+    </div>
+    <div class="module-card">
+      <span class="tag">Tier 3 GPU</span><span class="tag">Vision</span>
+      <h4>Module C: Anomaly</h4>
+      <p>Source: project #7 Industrial Anomaly (<code>07_industrial_anomaly</code>). Patch-distribution-based unsupervised anomaly detector. Answers "is this casting defective?" with a heatmap.</p>
+      <p><strong>Latency budget:</strong> 1.5 s p95.</p>
+    </div>
+  </div>
+  <div class="box box-amber">
+    <strong>Why these three.</strong> They are deliberately heterogeneous. CPU-only, small-GPU, and full-GPU. Tabular, multimodal, vision-only. 100 ms, 800 ms, 1.5 s. A platform that handles all three without three separate stacks is the operational definition of platform leverage.
+  </div>
+</section>
+
+<section id="architecture">
+  <h2>3. Federated Architecture</h2>
+  <p>One control plane shared across three modules. Adding a fourth module would not require any new infrastructure component.</p>
+  <div class="ascii">+--------------------- Werkstatt AI Control Plane ---------------------+
+|  Auth (Keycloak)    Model Registry (MLflow)   Feature Store (PG)    |
+|  Orchestrator (Airflow)   Logging (Loki)   Metrics (Prometheus)     |
++----------------------------------------------------------------------+
+                                |
+                                v
++------ Module A ------+ +------- Module B -------+ +------ Module C ------+
+| CSAT (Tier 1 CPU)    | | Catalogue (Tier 2 GPU) | | Anomaly (Tier 3 GPU) |
+| FastAPI inference    | | FastAPI inference      | | FastAPI inference    |
+| Postgres FS view     | | S3 image refs          | | Memory bank in S3    |
++----------------------+ +------------------------+ +----------------------+
+                                |
+                                v
+                        +---------------+
+                        | API Gateway   |  Traefik, OIDC, mTLS
+                        +---------------+
+                                |
+                  Tenant 1 ... Tenant N (workshops)</div>
+
+  <h3>Shared services in detail</h3>
+  <table>
+    <thead><tr><th>Service</th><th>Choice</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Auth</td><td>Keycloak, realm per tenant</td><td>OIDC standard, supports SAML fallback for older customers</td></tr>
+      <tr><td>Model registry</td><td>MLflow + Postgres + MinIO</td><td>Mature, vendor-agnostic, fits the EUR 200/month ceiling</td></tr>
+      <tr><td>Feature store</td><td>Postgres views, online + offline schemas</td><td>Same view definition for training and serving prevents skew</td></tr>
+      <tr><td>Orchestrator</td><td>Airflow LocalExecutor</td><td>Three weekly DAGs, no need for KubernetesExecutor in Phase 1</td></tr>
+      <tr><td>Monitoring</td><td>Prometheus + Grafana + Alertmanager + Loki</td><td>One templated dashboard covers all three modules via <code>$module</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="contract">
+  <h2>4. The Five-Endpoint Contract</h2>
+  <p>Every federated module exposes the same five endpoints and emits the same metrics labels. One alert rule set covers the platform.</p>
+<pre><code>GET  /healthz       liveness
+GET  /readyz        readiness, includes model load check
+GET  /metrics       Prometheus exposition
+POST /predict       inference, takes tenant_id from JWT
+GET  /model/info    current model URI and stage</code></pre>
+  <h3>Shared metrics schema</h3>
+<pre><code>werkstatt_requests_total{module, tenant, tier, outcome}
+werkstatt_request_latency_seconds_bucket{module, tier}
+werkstatt_prediction_confidence_bucket{module}</code></pre>
+  <div class="box box-green">
+    <strong>Why fixed labels matter.</strong> One Grafana dashboard parameterised by <code>$module</code> covers all three. One alert rule set covers all three. Adding a fourth module adds zero new dashboards.
+  </div>
+</section>
+
+<section id="lifecycle">
+  <h2>5. Train, Validate, Promote, Smoke-Test</h2>
+  <p>Each module has one Airflow DAG with the same six tasks: extract, validate, train, evaluate, register, smoke-test. Promotion is gated on metrics; smoke-test verifies the live service has picked up the new version.</p>
+  <div class="ascii">extract --> validate --> train --> evaluate --> register --> smoke_test --> drift_resolved
+                                       |
+                                gate (e.g. ROC-AUC >= 0.78)
+                                       |
+                              fail --> alert, do not promote</div>
+  <p>The smoke test calls <code>/model/info</code> on the live service after promotion. If the version has not incremented, the promotion is rolled back. This closes a class of "deployed but not live" failure that Paleyes 2022 cites as common in production ML.</p>
+</section>
+
+<section id="drift">
+  <h2>6. Drift Loop</h2>
+  <p>PSI (Population Stability Index) per feature on a one-hour rolling window. Threshold 0.25 sustained for 30 minutes triggers a retrain DAG. Drift is a trigger, not a verdict; the gate decides whether to promote.</p>
+  <div class="ascii">[Live request] --> [Module] --> [feature snapshot]
+                                       |
+                                 [PSI hourly job]
+                                       |
+                              PSI > 0.25, sustained
+                                       |
+                              [Alertmanager -> Airflow trigger]
+                                       |
+                              [Retrain DAG starts]
+                                       |
+                              [pass / fail logged]
+                                       |
+                              [auto-promote on pass]</div>
+  <p>PSI was chosen over Kolmogorov-Smirnov because it remains interpretable across numeric and categorical features. Reference: Lu et al 2018, Gama et al 2014, Bifet and Gavalda 2007, Losing et al 2018.</p>
+</section>
+
+<section id="cost">
+  <h2>7. Cost and the Three-Tier Cascade</h2>
+  <p>EUR 200 per month total ceiling on a single workstation-class box.</p>
+  <table>
+    <thead><tr><th>Line item</th><th>EUR / month (estimate)</th></tr></thead>
+    <tbody>
+      <tr><td>Workstation electricity (12 h on)</td><td>60 to 80</td></tr>
+      <tr><td>Domain, TLS, uptime checks</td><td>about 10</td></tr>
+      <tr><td>Off-site backup (S3-tier)</td><td>about 10</td></tr>
+      <tr><td>Buffer for one paid managed service</td><td>up to 100</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>80 to 200</strong></td></tr>
+    </tbody>
+  </table>
+  <h3>GPU-tier cascade</h3>
+  <p>Inference uses confidence-thresholded escalation:</p>
+  <ol>
+    <li><strong>Tier 1 (CPU).</strong> Cached predictions, simple sklearn (Module A baseline). Free.</li>
+    <li><strong>Tier 2 (small GPU).</strong> Quantised CNN, small batch (Module B). Used when Tier 1 confidence is low.</li>
+    <li><strong>Tier 3 (full GPU).</strong> Full-precision anomaly model (Module C). Used only when Tier 2 cannot decide.</li>
+  </ol>
+  <div class="box box-purple">
+    <strong>Note.</strong> Cost figures above are budgeting estimates for Phase 1, not measurements. Actual run-rate will replace them after one month of Production traffic.
+  </div>
+</section>
+
+<section id="timeline">
+  <h2>8. Phase 2 Timeline to 26 October 2026</h2>
+  <table>
+    <thead><tr><th>Month</th><th>Milestone</th></tr></thead>
+    <tbody>
+      <tr><td>June 2026</td><td>Control plane up, all three module skeletons smoke-tested with mock predictors</td></tr>
+      <tr><td>July 2026</td><td>Module A (CSAT) wrapper wired, retrain DAG green, Production cutover</td></tr>
+      <tr><td>August 2026</td><td>Module B (Catalogue) wired, Tier 1 to 2 cascade validated</td></tr>
+      <tr><td>September 2026</td><td>Module C (Anomaly) wired, Tier 2 to 3 cascade validated</td></tr>
+      <tr><td>October 2026</td><td>Two-tenant pilot, SLO ratification, capstone submission</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="discussion">
+  <h2>9. What the Federation Does Not Do</h2>
+  <ul>
+    <li>It does not fix model quality. If Module C reports a high false-positive rate on a customer's specific casting alloy, the platform makes that visible but does not solve it. The fix is per-module retraining with augmented data.</li>
+    <li>It does not address model-level information leakage from a shared cross-tenant model. Federated learning (Yang 2019) is the principled defence; it is not in Phase 1 scope.</li>
+    <li>It is not yet bit-for-bit reproducible. Phase 2 adds feature-snapshot persistence and seed pinning.</li>
+  </ul>
+</section>
+
+<section id="refs">
+  <h2>10. Top References</h2>
+  <p>Full list (27 verified entries) in <code>reports/references.md</code>. CrossRef-verified at scaffold time.</p>
+  <ol>
+    <li>Kreuzberger D, Kühl N, Hirschl S. Machine Learning Operations (MLOps): Overview, Definition, and Architecture. IEEE Access 2023. DOI:10.1109/ACCESS.2023.3262138</li>
+    <li>Paleyes A, Urma R, Lawrence N. Challenges in Deploying Machine Learning. ACM Computing Surveys 2022. DOI:10.1145/3533378</li>
+    <li>Sambasivan N et al. Data Cascades in High-Stakes AI. CHI 2021. DOI:10.1145/3411764.3445518</li>
+    <li>Lu J et al. Learning under Concept Drift: A Review. IEEE TKDE 2018. DOI:10.1109/TKDE.2018.2876857</li>
+    <li>Bergmann P et al. MVTec AD. CVPR 2019. DOI:10.1109/CVPR.2019.00982</li>
+  </ol>
+</section>
+
+</main>
+<footer>
+  Werkstatt AI - Liora Modul 2 MLOps Capstone - Cohort 6974 - Sandeep Grover - 2026
+</footer>
+</body>
+</html>

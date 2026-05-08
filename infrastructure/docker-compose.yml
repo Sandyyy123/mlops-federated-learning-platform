@@ -1,0 +1,218 @@
+# Werkstatt AI - sample multi-service compose for Phase 1.
+# Skeleton only. Not executed during scaffold.
+# To bring it up later:
+#   cp .env.example .env
+#   docker compose --env-file .env up -d
+#
+# Services: gateway, auth, registry, feature-store, orchestrator, monitoring,
+#           three module images (csat, catalog, anomaly), object store, log store.
+
+version: "3.9"
+
+x-default-restart: &default-restart
+  restart: unless-stopped
+
+services:
+
+  # -------------------- Edge --------------------
+  traefik:
+    image: traefik:v3.1
+    <<: *default-restart
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [werkstatt]
+
+  # -------------------- Auth --------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    <<: *default-restart
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    depends_on: [postgres]
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`auth.werkstatt.local`)"
+
+  # -------------------- Data plane --------------------
+  postgres:
+    image: postgres:16
+    <<: *default-restart
+    environment:
+      POSTGRES_USER: werkstatt
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_MULTIPLE_DATABASES: keycloak,mlflow,airflow,featurestore
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/postgres-init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    networks: [werkstatt]
+
+  minio:
+    image: minio/minio:latest
+    <<: *default-restart
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+    networks: [werkstatt]
+
+  # -------------------- ML platform --------------------
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.16.0
+    <<: *default-restart
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri postgresql+psycopg2://werkstatt:${POSTGRES_PASSWORD}@postgres/mlflow
+      --artifacts-destination s3://werkstatt-mlflow/
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+    depends_on: [postgres, minio]
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mlflow.rule=Host(`mlflow.werkstatt.local`)"
+
+  airflow:
+    image: apache/airflow:2.10.0
+    <<: *default-restart
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://werkstatt:${POSTGRES_PASSWORD}@postgres/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      _AIRFLOW_DB_MIGRATE: "true"
+      _AIRFLOW_WWW_USER_CREATE: "true"
+      _AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_ADMIN_USER}
+      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD}
+    volumes:
+      - ./airflow_dag_skeleton.py:/opt/airflow/dags/csat_retrain.py:ro
+      - airflow_logs:/opt/airflow/logs
+    depends_on: [postgres]
+    command: standalone
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.airflow.rule=Host(`airflow.werkstatt.local`)"
+
+  # -------------------- Monitoring --------------------
+  prometheus:
+    image: prom/prometheus:latest
+    <<: *default-restart
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prom_data:/prometheus
+    networks: [werkstatt]
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    <<: *default-restart
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on: [prometheus]
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.werkstatt.local`)"
+
+  loki:
+    image: grafana/loki:2.9.0
+    <<: *default-restart
+    command: -config.file=/etc/loki/local-config.yaml
+    networks: [werkstatt]
+
+  # -------------------- Federated module images --------------------
+  module-csat:
+    build:
+      context: ../modules/csat
+      dockerfile: Dockerfile
+    <<: *default-restart
+    environment:
+      MODULE_NAME: csat
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MODEL_NAME: werkstatt.csat.olist
+      MODEL_STAGE: Production
+      FEATURE_STORE_DSN: postgresql://werkstatt:${POSTGRES_PASSWORD}@postgres/featurestore
+    depends_on: [mlflow, postgres]
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.csat.rule=Host(`api.werkstatt.local`) && PathPrefix(`/api/csat`)"
+
+  module-catalog:
+    build:
+      context: ../modules/catalog
+      dockerfile: Dockerfile
+    <<: *default-restart
+    environment:
+      MODULE_NAME: catalog
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MODEL_NAME: werkstatt.catalog.rakuten
+      MODEL_STAGE: Production
+      S3_ENDPOINT: http://minio:9000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    depends_on: [mlflow, minio]
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.catalog.rule=Host(`api.werkstatt.local`) && PathPrefix(`/api/catalog`)"
+
+  module-anomaly:
+    build:
+      context: ../modules/anomaly
+      dockerfile: Dockerfile
+    <<: *default-restart
+    environment:
+      MODULE_NAME: anomaly
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MODEL_NAME: werkstatt.qc.anomaly
+      MODEL_STAGE: Production
+      S3_ENDPOINT: http://minio:9000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    depends_on: [mlflow, minio]
+    networks: [werkstatt]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.anomaly.rule=Host(`api.werkstatt.local`) && PathPrefix(`/api/anomaly`)"
+
+networks:
+  werkstatt:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
+  airflow_logs:
+  prom_data:
+  grafana_data:
