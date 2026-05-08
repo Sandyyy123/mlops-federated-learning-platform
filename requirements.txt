@@ -1,0 +1,6 @@
+airflow
+fastapi
+prometheus_client
+pydantic
+starlette
+uuid
