@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![MLOps](https://img.shields.io/badge/MLOps-federated-purple) ![Docker](https://img.shields.io/badge/Docker-containerised-blue) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![MLOps](https://img.shields.io/badge/MLOps-federated-purple) ![Docker](https://img.shields.io/badge/Docker-containerised-blue) ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 # MLOps + Federated Learning Platform — Werkstatt AI Capstone
 
