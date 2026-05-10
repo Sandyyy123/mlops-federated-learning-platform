@@ -1,5 +1,5 @@
-# Werkstatt AI - sample multi-service compose for Phase 1.
-# Skeleton only. Not executed during scaffold.
+# Multi-service Docker Compose for the MLOps platform.
+# Reference configuration. Adapt for your environment.
 # To bring it up later:
 #   cp .env.example .env
 #   docker compose --env-file .env up -d
