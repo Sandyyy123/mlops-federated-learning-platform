@@ -44,8 +44,8 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 **Task.** Binary classification: will the next review be 4 to 5 stars (positive) or 1 to 3 (non-positive)?
 
 **Source artefacts to import.**
-- Final tuned model from `project_root/deliverables/model_advanced.pkl`
-- Feature schema from `project_root/src/features.py`
+- Final tuned model from `./deliverables/model_advanced.pkl`
+- Feature schema from `./src/features.py`
 - Preprocessing pipeline (column transformer plus encoder) from the same file
 
 **Werkstatt wrapping.**
@@ -84,9 +84,9 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 **Task.** Multi-class classification of product listings using image plus text.
 
 **Source artefacts to import.**
-- Vision branch checkpoint from `project_root/deliverables/vision_branch.pt`
+- Vision branch checkpoint from `./deliverables/vision_branch.pt`
 - Text branch tokenizer and weights from the same folder
-- Fusion head from `project_root/src/fusion.py`
+- Fusion head from `./src/fusion.py`
 
 **Werkstatt wrapping.**
 - `src/wrappers/catalog_wrapper.py` (v1.0): runs both branches, late-fuses logits, returns top-3 with confidences.
@@ -123,9 +123,9 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 **Task.** Binary anomaly score per image patch, plus a per-image overall score and segmentation map.
 
 **Source artefacts to import.**
-- PaDiM or PatchCore feature memory bank from `project_root/deliverables/memory_bank.pt`
+- PaDiM or PatchCore feature memory bank from `./deliverables/memory_bank.pt`
 - Backbone weights (ResNet or WideResNet) from the same folder
-- Threshold from validation set saved in `project_root/deliverables/threshold.json`
+- Threshold from validation set saved in `./deliverables/threshold.json`
 
 **Werkstatt wrapping.**
 - `src/wrappers/anomaly_wrapper.py` (v1.0): loads backbone, computes embedding, distance to memory bank, threshold-based decision.
