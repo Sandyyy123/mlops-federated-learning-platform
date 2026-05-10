@@ -66,7 +66,8 @@ cd mlops-federated-learning-platform
 pip install -r requirements.txt
 
 # See data/README.md for dataset download
-python src/model_baseline.py
+python infrastructure/fastapi_skeleton.py  # API scaffold
+python infrastructure/airflow_dag_skeleton.py  # DAG scaffold
 python src/model_advanced.py
 ```
 
