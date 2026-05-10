@@ -1,10 +1,10 @@
 # Werkstatt AI: A Federated MLOps Platform Productionising Three Heterogeneous Machine Learning Modules for the DACH Industrial Mittelstand
 
-**Authors.** Sandeep Grover, Liora MLE Programme, Cohort 6974, Modul 2 MLOps Capstone
+**Authors.** Sandeep Grover, Independent Research, Modul 2 MLOps Capstone
 
 ## Abstract
 
-Most Mittelstand workshops in the DACH region run no production machine learning today, even though they sit on three classes of data that an ML system can act on every day: customer reviews, product catalogues, and quality-control camera feeds. The blocker is rarely the model. It is the operational layer that registers, serves, monitors, retrains, and isolates models across tenants. This capstone describes Werkstatt AI, an MLOps platform that federates three already-trained Liora projects (an Olist customer-satisfaction classifier, a Rakuten multimodal product classifier, and an MVTec-style anomaly detector) behind one control plane. The deliverable is the platform, not a fourth model. The platform reuses one Keycloak realm-per-tenant, one MLflow registry, one Postgres-backed feature store, one Airflow scheduler, and one Prometheus and Grafana stack across all three modules. Each module exposes the same five HTTP endpoints, emits the same metrics schema, and is governed by the same drift, retrain, and promotion rules. We argue that the federation pattern is the correct unit of measurement for MLOps competence in a small-team setting: it forces every Modul 2 learning objective (containerisation, registry, serving, monitoring, drift, CI and CD, multi-tenancy) to be exercised once, and only once, across modules that genuinely differ in input modality, latency budget, and GPU footprint. We close with a cost analysis that holds the platform under a hard ceiling of EUR 200 per month using a three-tier GPU cascade and self-hosted infrastructure on a single workstation, and a Phase 2 deployment plan to reach Production by 26 October 2026, the Modul 2 grading deadline.
+Most Mittelstand workshops in the DACH region run no production machine learning today, even though they sit on three classes of data that an ML system can act on every day: customer reviews, product catalogues, and quality-control camera feeds. The blocker is rarely the model. It is the operational layer that registers, serves, monitors, retrains, and isolates models across tenants. This capstone describes Werkstatt AI, an MLOps platform that federates three already-trained Portfolio projects (an Olist customer-satisfaction classifier, a Rakuten multimodal product classifier, and an MVTec-style anomaly detector) behind one control plane. The deliverable is the platform, not a fourth model. The platform reuses one Keycloak realm-per-tenant, one MLflow registry, one Postgres-backed feature store, one Airflow scheduler, and one Prometheus and Grafana stack across all three modules. Each module exposes the same five HTTP endpoints, emits the same metrics schema, and is governed by the same drift, retrain, and promotion rules. We argue that the federation pattern is the correct unit of measurement for MLOps competence in a small-team setting: it forces every Modul 2 learning objective (containerisation, registry, serving, monitoring, drift, CI and CD, multi-tenancy) to be exercised once, and only once, across modules that genuinely differ in input modality, latency budget, and GPU footprint. We close with a cost analysis that holds the platform under a hard ceiling of EUR 200 per month using a three-tier GPU cascade and self-hosted infrastructure on a single workstation, and a v1.0 deployment plan to reach Production by 26 October 2026, the Modul 2 grading deadline.
 
 **Keywords.** MLOps, federated platform, multi-tenant ML, model serving, drift detection, Industry 4.0, DACH Mittelstand.
 
@@ -12,9 +12,9 @@ Most Mittelstand workshops in the DACH region run no production machine learning
 
 Production machine learning is mostly not machine learning. Surveys across the last five years agree on the proportions: practitioners spend roughly 80 percent of their time on data, infrastructure, and operational glue, and roughly 20 percent on the modelling work that the public-facing literature describes [Sambasivan 2021, Paleyes 2022]. The community has converged on a name for the missing 80 percent: MLOps. Definitions vary; the most cited and the one we adopt here is Kreuzberger and colleagues' "an ML engineering culture and practice that aims at unifying ML system development and ML system operations" [Kreuzberger 2023]. Operationally, that means continuous training, continuous integration, continuous delivery, and continuous monitoring of models, with the same engineering rigour that DevOps brought to web services a decade earlier [Chen 2015, Jamshidi 2018].
 
-The DACH industrial Mittelstand is an interesting venue for an MLOps capstone because the technical buyer profile is unusual. A workshop owner with 30 to 300 employees rarely employs a full data team; they buy ML as a finished service from a smaller integrator. The integrator therefore has to deliver three things at once: (1) models that solve a specific shop-floor problem, (2) a deployment substrate the customer can run inside their own network or in a small cloud footprint, and (3) an operational story that a non-ML engineer can read at 7 a.m. on a Monday and understand whether the system is healthy. The Modul 2 brief of the Liora MLE Programme reflects this triangle: the grader expects evidence of all three, not just the first.
+The DACH industrial Mittelstand is an interesting venue for an MLOps capstone because the technical buyer profile is unusual. A workshop owner with 30 to 300 employees rarely employs a full data team; they buy ML as a finished service from a smaller integrator. The integrator therefore has to deliver three things at once: (1) models that solve a specific shop-floor problem, (2) a deployment substrate the customer can run inside their own network or in a small cloud footprint, and (3) an operational story that a non-ML engineer can read at 7 a.m. on a Monday and understand whether the system is healthy. The 
 
-Three Liora projects already exist that can plausibly run on a Mittelstand shop floor, each chosen during earlier modules of the same programme:
+Three Portfolio projects already exist that can plausibly run on a Mittelstand shop floor, each chosen during earlier modules of the same programme:
 
 - **#2, Olist Customer Satisfaction.** A binary classifier on tabular post-purchase review data. The source project established that delivery-time features dominate model performance and that XGBoost outperforms a logistic baseline. As a microservice it answers the question "is this customer about to leave a bad review?".
 
@@ -96,9 +96,9 @@ The headline number is one: one of every shared piece of infrastructure, regardl
 
 ### 3.2 Per-module reliability targets
 
-Draft service-level objectives (Table 1) are deliberately conservative for Phase 1 and will be revised after the first month of Production traffic.
+Draft service-level objectives (Table 1) are deliberately conservative for v1.0 and will be revised after the first month of Production traffic.
 
-**Table 1. Phase 1 SLOs.**
+**Table 1. v1.0 SLOs.**
 
 | Module      | Availability | p95 latency | Error rate |
 |-------------|--------------|-------------|------------|
@@ -114,9 +114,9 @@ The drift loop is the most opinionated part of the design. We trade a small fals
 
 ### 3.4 Cost envelope
 
-A worked Phase 1 budget (Table 2) shows the platform fitting under EUR 200 per month with margin for one paid managed service. The largest variable cost is workstation electricity, which is geography-dependent; the figures assume German residential tariffs at 12 hours of daily on-time. Note that no figure in this table claims measurement; these are budgeting estimates for Phase 1 planning. Actual run-rate measurements will be taken after one month of Production traffic and will replace this table in the Phase 2 manuscript revision.
+A worked v1.0 budget (Table 2) shows the platform fitting under EUR 200 per month with margin for one paid managed service. The largest variable cost is workstation electricity, which is geography-dependent; the figures assume German residential tariffs at 12 hours of daily on-time. Note that no figure in this table claims measurement; these are budgeting estimates for v1.0 planning. Actual run-rate measurements will be taken after one month of Production traffic and will replace this table in the v1.0 manuscript revision.
 
-**Table 2. Phase 1 budget plan.**
+**Table 2. v1.0 budget plan.**
 
 | Line item                        | EUR per month (estimate) |
 |----------------------------------|--------------------------|
@@ -132,17 +132,17 @@ A worked Phase 1 budget (Table 2) shows the platform fitting under EUR 200 per m
 
 The federation pattern does not fix model quality. If Module C's anomaly detector reports a high false-positive rate on a customer's specific casting alloy, the platform makes that visible (drift signals, confidence histogram, per-tenant error rate) but does not solve it. The fix is per-module: collect tenant-specific data, run the retrain DAG with the augmented set, and let the gate decide whether to promote. The platform reduces the time from "we suspect a problem" to "we see the problem and have a retraining hook" from days to minutes. It does not reduce the time from "we see the problem" to "we have a better model" below what data collection requires.
 
-### 4.2 Why a single workstation is enough for Phase 1
+### 4.2 Why a single workstation is enough for v1.0
 
-A single GPU workstation handles all three modules at the SLOs in Table 1 because their resource demands stagger naturally in time. Module A (CPU-only) runs continuously with negligible cost. Module B (small GPU, image-bound) handles bursts during catalogue ingestion windows that customers tend to schedule overnight. Module C (full GPU, latency-bound) is dominated by the QC shift schedule, typically 06:00 to 18:00 local time. The workstation's GPU is therefore busy with one of the three at any given moment, not all three. The maintenance-window flag for nightly retraining ensures training and inference do not collide. If a customer requires 24/7 sub-second QC, the platform will burst Module C onto a GPU cloud node via the K3s upgrade path described in Section 2.7; that is a Phase 2 trigger, not a Phase 1 commitment.
+A single GPU workstation handles all three modules at the SLOs in Table 1 because their resource demands stagger naturally in time. Module A (CPU-only) runs continuously with negligible cost. Module B (small GPU, image-bound) handles bursts during catalogue ingestion windows that customers tend to schedule overnight. Module C (full GPU, latency-bound) is dominated by the QC shift schedule, typically 06:00 to 18:00 local time. The workstation's GPU is therefore busy with one of the three at any given moment, not all three. The maintenance-window flag for nightly retraining ensures training and inference do not collide. If a customer requires 24/7 sub-second QC, the platform will burst Module C onto a GPU cloud node via the K3s upgrade path described in Section 2.7; that is a v1.0 trigger, not a v1.0 commitment.
 
 ### 4.3 Multi-tenancy threats and what is left unsolved
 
-The four-layer isolation in Section 2.6 covers the high-frequency threats (cross-tenant data leakage at the storage layer, JWT forgery, header smuggling at the gateway). It does not cover model-level information leakage. Specifically, a shared model trained on pooled data across tenants is, in the limit, vulnerable to membership-inference attacks: a tenant could probe predictions to infer features of other tenants' training rows. Yang and colleagues' federated-learning framework [Yang 2019] is the principled defence; we do not implement it in Phase 1 because the threat is low-likelihood for the Mittelstand buyer profile and the engineering cost is high. The Phase 2 risk register flags this as an open item to be re-assessed once a tenant explicitly contracts for cross-tenant isolation.
+The four-layer isolation in Section 2.6 covers the high-frequency threats (cross-tenant data leakage at the storage layer, JWT forgery, header smuggling at the gateway). It does not cover model-level information leakage. Specifically, a shared model trained on pooled data across tenants is, in the limit, vulnerable to membership-inference attacks: a tenant could probe predictions to infer features of other tenants' training rows. Yang and colleagues' federated-learning framework [Yang 2019] is the principled defence; we do not implement it in v1.0 because the threat is low-likelihood for the Mittelstand buyer profile and the engineering cost is high. The v1.0 risk register flags this as an open item to be re-assessed once a tenant explicitly contracts for cross-tenant isolation.
 
 ### 4.4 What we changed about the source projects
 
-Nothing. Per agent rules 7 and 8 of the Liora Phase 1 framework, the three source projects (`02_supply_chain_csat`, `06_rakuten_multimodal`, `07_industrial_anomaly`) are not modified. The integration is done via thin wrappers that import from those projects' `deliverables/` artefacts; the source code is read but not edited. This is also a defensible engineering pattern outside the academic context: a platform should treat upstream model packages as immutable dependencies, pinned to a specific version, and integrate against a contract.
+Nothing. Per agent rules 7 and 8 of the Project layout
 
 ### 4.5 Comparison to industrial digital-twin and Industry 4.0 platforms
 
@@ -150,11 +150,11 @@ Industry 4.0 reference architectures, for example Leng and colleagues' digital-t
 
 ### 4.6 Reproducibility
 
-The platform is reproducible in the operational sense (re-create the stack from `docker-compose.yml`, re-train any module from its DAG, replay any prediction by `request_id` plus model version) but not yet in the strict scientific sense (bit-for-bit re-train identical model from a frozen seed and feature snapshot). Phase 2 will close the gap by adding feature-snapshot persistence to MinIO and seed-pinning across all three training scripts. We flag this gap explicitly because Sambasivan and colleagues identify reproducibility as a leading cause of "data cascade" failures [Sambasivan 2021].
+The platform is reproducible in the operational sense (re-create the stack from `docker-compose.yml`, re-train any module from its DAG, replay any prediction by `request_id` plus model version) but not yet in the strict scientific sense (bit-for-bit re-train identical model from a frozen seed and feature snapshot). v1.0 will close the gap by adding feature-snapshot persistence to MinIO and seed-pinning across all three training scripts. We flag this gap explicitly because Sambasivan and colleagues identify reproducibility as a leading cause of "data cascade" failures [Sambasivan 2021].
 
 ## 5. Conclusion
 
-Werkstatt AI is a Modul 2 capstone that delivers an MLOps platform rather than a fourth ML model. It federates three already-trained Liora modules (Olist Customer Satisfaction, Rakuten Multimodal Product Classification, Industrial Anomaly Detection) behind one control plane: one auth, one model registry, one feature store, one orchestrator, one monitoring stack. Each module exposes the same five-endpoint contract, emits the same metrics schema, and is governed by the same drift, retrain, and promotion rules.
+Werkstatt AI is a 
 
 The phase plan to Production by the 26 October 2026 grading deadline is:
 

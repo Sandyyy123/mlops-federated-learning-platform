@@ -1,11 +1,11 @@
 """FastAPI inference skeleton for any Werkstatt AI module.
 
-Phase 1 deliverable. Skeleton only. Not executed during scaffold.
+v1.0 deliverable. Skeleton only. Not executed during implementation.
 
 The same file is used for all three federated modules. The module body
 (model load, predict, drift hooks) is injected via a wrapper that
 implements the `ModuleAdapter` protocol below. Wrappers live under
-`modules/<name>/wrapper.py` (Phase 2).
+`modules/<name>/wrapper.py` (v1.0).
 """
 
 from __future__ import annotations
@@ -176,10 +176,10 @@ def create_app(adapter: ModuleAdapter) -> FastAPI:
     return api
 
 
-# ----- Phase 2 entrypoint shape -----
+# ----- v1.0 entrypoint shape -----
 #
 # from modules.csat.wrapper import CsatAdapter
 # api = create_app(CsatAdapter())
 #
-# In Phase 1 the wrappers are intentionally absent; this file is the
+# In v1.0 the wrappers are intentionally absent; this file is the
 # protocol those wrappers will satisfy.

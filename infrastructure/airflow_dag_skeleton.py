@@ -1,6 +1,6 @@
 """Airflow DAG skeleton for the Werkstatt AI Customer Satisfaction module.
 
-Phase 1 deliverable. Skeleton only. Not executed during scaffold.
+v1.0 deliverable. Skeleton only. Not executed during implementation.
 
 Pattern repeats for the catalogue and anomaly modules - identical task
 structure, different extract / train / register operators.
@@ -32,9 +32,9 @@ def extract_offline_features(**context):
     Reads the same SQL view definition used at serving time so training and
     serving see identical feature semantics.
     """
-    # Phase 2: psycopg2 query, write parquet to MinIO under
+    # v1.0: psycopg2 query, write parquet to MinIO under
     # s3://werkstatt-features/csat/<run_id>.parquet
-    raise NotImplementedError("Phase 2 implementation")
+    raise NotImplementedError("v1.0 implementation")
 
 
 def validate_features(**context):
@@ -44,7 +44,7 @@ def validate_features(**context):
     schema drifts (new column, removed column, dtype change) or if a feature's
     PSI vs reference exceeds 0.25.
     """
-    raise NotImplementedError("Phase 2 implementation")
+    raise NotImplementedError("v1.0 implementation")
 
 
 def train_model(**context):
@@ -54,7 +54,7 @@ def train_model(**context):
     metrics, and the fitted pipeline to MLflow under experiment
     `werkstatt.csat.weekly`.
     """
-    raise NotImplementedError("Phase 2 implementation")
+    raise NotImplementedError("v1.0 implementation")
 
 
 def evaluate_model(**context):
@@ -63,7 +63,7 @@ def evaluate_model(**context):
     Gate: ROC-AUC >= 0.78, Brier <= 0.18, calibration slope in [0.9, 1.1].
     Returns 'pass' or 'fail' to XCom for the branch operator downstream.
     """
-    raise NotImplementedError("Phase 2 implementation")
+    raise NotImplementedError("v1.0 implementation")
 
 
 def register_and_promote(**context):
@@ -73,12 +73,12 @@ def register_and_promote(**context):
     from `evaluate_model`. Notifies the inference service via a Pub/Sub topic so
     it pulls the new URI without a restart.
     """
-    raise NotImplementedError("Phase 2 implementation")
+    raise NotImplementedError("v1.0 implementation")
 
 
 def notify_drift_resolved(**context):
     """If this DAG was triggered by a drift alert, mark the alert resolved."""
-    raise NotImplementedError("Phase 2 implementation")
+    raise NotImplementedError("v1.0 implementation")
 
 
 with DAG(

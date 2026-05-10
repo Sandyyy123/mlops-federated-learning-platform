@@ -1,7 +1,7 @@
 # References
 
 All references below were verified live against the CrossRef API
-(`https://api.crossref.org/works/{doi}`) at scaffold time. Only entries whose
+(`https://api.crossref.org/works/{doi}`) at implementation time. Only entries whose
 returned title and authors matched the topic are retained. Format keeps
 author / title / journal / year / DOI; volume, issue, and pages are intentionally
 omitted to avoid fabrication risk.
@@ -60,7 +60,7 @@ omitted to avoid fabrication risk.
 ---
 
 **Verification method.** Each DOI above was queried with
-`GET https://api.crossref.org/works/{doi}` during scaffold. Entries returning
+`GET https://api.crossref.org/works/{doi}` during implementation. Entries returning
 4xx or whose returned title did not match the cited topic were dropped. No
 volume, issue, or page numbers are listed because CrossRef pagination metadata
 varies in completeness; the DOI is the canonical identifier and resolves

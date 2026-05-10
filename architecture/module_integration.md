@@ -44,12 +44,12 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 **Task.** Binary classification: will the next review be 4 to 5 stars (positive) or 1 to 3 (non-positive)?
 
 **Source artefacts to import.**
-- Final tuned model from `liora_projects/02_supply_chain_csat/deliverables/model_advanced.pkl`
-- Feature schema from `liora_projects/02_supply_chain_csat/src/features.py`
+- Final tuned model from `project_root/deliverables/model_advanced.pkl`
+- Feature schema from `project_root/src/features.py`
 - Preprocessing pipeline (column transformer plus encoder) from the same file
 
 **Werkstatt wrapping.**
-- `src/wrappers/csat_wrapper.py` (Phase 2): loads the pickle, exposes `.predict_proba`, applies the same preprocessing.
+- `src/wrappers/csat_wrapper.py` (v1.0): loads the pickle, exposes `.predict_proba`, applies the same preprocessing.
 - Tier 1 only (CPU). Sub-100 ms p95.
 - Feature store view `online.csat_features_v1` matches the training column order exactly.
 
@@ -84,12 +84,12 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 **Task.** Multi-class classification of product listings using image plus text.
 
 **Source artefacts to import.**
-- Vision branch checkpoint from `liora_projects/06_rakuten_multimodal/deliverables/vision_branch.pt`
+- Vision branch checkpoint from `project_root/deliverables/vision_branch.pt`
 - Text branch tokenizer and weights from the same folder
-- Fusion head from `liora_projects/06_rakuten_multimodal/src/fusion.py`
+- Fusion head from `project_root/src/fusion.py`
 
 **Werkstatt wrapping.**
-- `src/wrappers/catalog_wrapper.py` (Phase 2): runs both branches, late-fuses logits, returns top-3 with confidences.
+- `src/wrappers/catalog_wrapper.py` (v1.0): runs both branches, late-fuses logits, returns top-3 with confidences.
 - Tier 2. Quantised vision branch on small GPU; falls back to Tier 1 cached prediction if the same image hash was seen in the last 24 h.
 - Image upload is multipart; the gateway pre-signs an S3 URL and the inference service reads from S3.
 
@@ -123,12 +123,12 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 **Task.** Binary anomaly score per image patch, plus a per-image overall score and segmentation map.
 
 **Source artefacts to import.**
-- PaDiM or PatchCore feature memory bank from `liora_projects/07_industrial_anomaly/deliverables/memory_bank.pt`
+- PaDiM or PatchCore feature memory bank from `project_root/deliverables/memory_bank.pt`
 - Backbone weights (ResNet or WideResNet) from the same folder
-- Threshold from validation set saved in `liora_projects/07_industrial_anomaly/deliverables/threshold.json`
+- Threshold from validation set saved in `project_root/deliverables/threshold.json`
 
 **Werkstatt wrapping.**
-- `src/wrappers/anomaly_wrapper.py` (Phase 2): loads backbone, computes embedding, distance to memory bank, threshold-based decision.
+- `src/wrappers/anomaly_wrapper.py` (v1.0): loads backbone, computes embedding, distance to memory bank, threshold-based decision.
 - Tier 3 (full GPU). p95 target 1.5 s.
 - Output includes a heatmap as a base64 PNG so the workshop UI can overlay it on the original image.
 
@@ -162,9 +162,9 @@ HTTP 4xx for validation, 5xx for inference failures. All errors include a
 3. **Same model registry stages.** No module can serve from `Staging` in production traffic; the gateway rejects calls if `model/info` returns a non-Production stage.
 4. **Same logging schema.** All three modules emit the same JSON log line: `request_id`, `tenant_id`, `module`, `model_version`, `latency_ms`, `tier`, `confidence`, `outcome`. One Loki query covers all three.
 
-## Phase 1 vs Phase 2
+## v1.0 vs v1.0
 
-Phase 1 (this scaffold) defines the contracts and the skeletons. The wrapper
-classes referenced above are stubs; Phase 2 fills them in by importing the
+v1.0 (this implementation) defines the contracts and the skeletons. The wrapper
+classes referenced above are stubs; v1.0 fills them in by importing the
 trained artefacts from projects #2, #6, and #7. No code in those source projects
 is modified.

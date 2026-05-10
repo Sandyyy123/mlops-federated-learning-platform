@@ -90,7 +90,7 @@
 
 <section id="overview" class="hero">
   <h1>Werkstatt AI</h1>
-  <div class="subtitle">A federated MLOps platform productionising three already-trained ML modules behind one control plane. Liora Modul 2 capstone, cohort 6974, deadline 26 October 2026.</div>
+  <div class="subtitle">A federated MLOps platform productionising three already-trained ML modules behind one control plane. Portfolio Modul 2 capstone, , deadline 26 October 2026.</div>
   <div class="meta-grid">
     <div class="item"><span class="lbl">Module</span><span class="val">Modul 2 (MLOps), 266 UE</span></div>
     <div class="item"><span class="lbl">Pattern</span><span class="val">Federation, not unification</span></div>
@@ -103,7 +103,7 @@
 
 <section id="problem">
   <h2>1. Problem and Motivation</h2>
-  <p>Mittelstand workshops in the DACH region rarely run production machine learning, even though they hold three classes of data that an ML system can act on every day: customer reviews, product catalogues, and quality-control camera feeds. The blocker is the operational layer: registering, serving, monitoring, retraining, and isolating models across tenants. Werkstatt AI delivers that layer as a single platform, federating three Liora projects that each solve a real workshop-floor question.</p>
+  <p>Mittelstand workshops in the DACH region rarely run production machine learning, even though they hold three classes of data that an ML system can act on every day: customer reviews, product catalogues, and quality-control camera feeds. The blocker is the operational layer: registering, serving, monitoring, retraining, and isolating models across tenants. Werkstatt AI delivers that layer as a single platform, federating three Portfolio projects that each solve a real workshop-floor question.</p>
   <div class="box box-blue">
     <strong>Capstone bet.</strong> Modul 2 is graded on MLOps competency, not on a fourth ML model. Building one more model adds no new evidence; productionising three exercises every Modul 2 learning objective in one deliverable.
   </div>
@@ -165,7 +165,7 @@
       <tr><td>Auth</td><td>Keycloak, realm per tenant</td><td>OIDC standard, supports SAML fallback for older customers</td></tr>
       <tr><td>Model registry</td><td>MLflow + Postgres + MinIO</td><td>Mature, vendor-agnostic, fits the EUR 200/month ceiling</td></tr>
       <tr><td>Feature store</td><td>Postgres views, online + offline schemas</td><td>Same view definition for training and serving prevents skew</td></tr>
-      <tr><td>Orchestrator</td><td>Airflow LocalExecutor</td><td>Three weekly DAGs, no need for KubernetesExecutor in Phase 1</td></tr>
+      <tr><td>Orchestrator</td><td>Airflow LocalExecutor</td><td>Three weekly DAGs, no need for KubernetesExecutor in v1.0</td></tr>
       <tr><td>Monitoring</td><td>Prometheus + Grafana + Alertmanager + Loki</td><td>One templated dashboard covers all three modules via <code>$module</code></td></tr>
     </tbody>
   </table>
@@ -239,12 +239,12 @@ werkstatt_prediction_confidence_bucket{module}</code></pre>
     <li><strong>Tier 3 (full GPU).</strong> Full-precision anomaly model (Module C). Used only when Tier 2 cannot decide.</li>
   </ol>
   <div class="box box-purple">
-    <strong>Note.</strong> Cost figures above are budgeting estimates for Phase 1, not measurements. Actual run-rate will replace them after one month of Production traffic.
+    <strong>Note.</strong> Cost figures above are budgeting estimates for v1.0, not measurements. Actual run-rate will replace them after one month of Production traffic.
   </div>
 </section>
 
 <section id="timeline">
-  <h2>8. Phase 2 Timeline to 26 October 2026</h2>
+  <h2>8. v1.0 Timeline to 26 October 2026</h2>
   <table>
     <thead><tr><th>Month</th><th>Milestone</th></tr></thead>
     <tbody>
@@ -261,14 +261,14 @@ werkstatt_prediction_confidence_bucket{module}</code></pre>
   <h2>9. What the Federation Does Not Do</h2>
   <ul>
     <li>It does not fix model quality. If Module C reports a high false-positive rate on a customer's specific casting alloy, the platform makes that visible but does not solve it. The fix is per-module retraining with augmented data.</li>
-    <li>It does not address model-level information leakage from a shared cross-tenant model. Federated learning (Yang 2019) is the principled defence; it is not in Phase 1 scope.</li>
-    <li>It is not yet bit-for-bit reproducible. Phase 2 adds feature-snapshot persistence and seed pinning.</li>
+    <li>It does not address model-level information leakage from a shared cross-tenant model. Federated learning (Yang 2019) is the principled defence; it is not in v1.0 scope.</li>
+    <li>It is not yet bit-for-bit reproducible. v1.0 adds feature-snapshot persistence and seed pinning.</li>
   </ul>
 </section>
 
 <section id="refs">
   <h2>10. Top References</h2>
-  <p>Full list (27 verified entries) in <code>reports/references.md</code>. CrossRef-verified at scaffold time.</p>
+  <p>Full list (27 verified entries) in <code>reports/references.md</code>. CrossRef-verified at implementation time.</p>
   <ol>
     <li>Kreuzberger D, Kühl N, Hirschl S. Machine Learning Operations (MLOps): Overview, Definition, and Architecture. IEEE Access 2023. DOI:10.1109/ACCESS.2023.3262138</li>
     <li>Paleyes A, Urma R, Lawrence N. Challenges in Deploying Machine Learning. ACM Computing Surveys 2022. DOI:10.1145/3533378</li>
@@ -280,7 +280,7 @@ werkstatt_prediction_confidence_bucket{module}</code></pre>
 
 </main>
 <footer>
-  Werkstatt AI - Liora Modul 2 MLOps Capstone - Cohort 6974 - Sandeep Grover - 2026
+  Werkstatt AI - Portfolio Modul 2 MLOps Capstone -  - Sandeep Grover - 2026
 </footer>
 </body>
 </html>

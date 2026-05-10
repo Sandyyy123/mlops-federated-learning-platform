@@ -83,7 +83,7 @@ Hard target EUR 200 per month total. Allocation:
 - backup S3 (off-site): about EUR 10 per month
 - buffer for paid managed services if a customer demands it: EUR 100 per month
 
-If any tenant requires GPU autoscaling beyond the workstation, the architecture allows a clean lift-and-shift to a single-node K3s plus GPU cloud burst, but that is a Phase 2 decision, not Phase 1.
+If any tenant requires GPU autoscaling beyond the workstation, the architecture allows a clean lift-and-shift to a single-node K3s plus GPU cloud burst, but that is a v1.0 decision, not v1.0.
 
 ## 6. GPU-tier cascade
 
@@ -98,10 +98,10 @@ The router decides escalation by confidence threshold. Tier 3 calls are logged w
 
 - All inter-service traffic goes through Traefik. No service is exposed publicly except the gateway.
 - Per-tenant database schemas. Postgres role-based access enforces the boundary.
-- Secrets in HashiCorp Vault dev mode (Phase 1) or AWS Secrets Manager (Phase 2). Never in the image.
+- Secrets in HashiCorp Vault dev mode (v1.0) or AWS Secrets Manager (v1.0). Never in the image.
 - Image scanning in CI (Trivy). Builds fail on critical CVEs.
 
-## 8. Reliability targets (SLO draft for Phase 1)
+## 8. Reliability targets (SLO draft for v1.0)
 
 | Module | Availability | p95 latency | Error rate |
 |--------|--------------|-------------|------------|

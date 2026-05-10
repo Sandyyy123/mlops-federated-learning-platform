@@ -1,6 +1,6 @@
 # Prometheus and Grafana Notes
 
-Phase 1 reference for the Werkstatt AI monitoring stack. Skeleton only.
+v1.0 reference for the Werkstatt AI monitoring stack. Skeleton only.
 
 ## 1. Prometheus configuration (`prometheus.yml`)
 

@@ -141,8 +141,8 @@ sequenceDiagram
 
 ## 5. Notes
 
-- Every arrow above is in scope for Phase 2 implementation. Phase 1 (this
-  scaffold) only defines the topology.
+- Every arrow above is in scope for v1.0 implementation. v1.0 (this
+  implementation) only defines the topology.
 - The drift loop is the most opinionated part of the design: it intentionally
   trades a small false-positive retraining cost for the much larger cost of a
   silently degrading model in production. References 9 to 12 in
