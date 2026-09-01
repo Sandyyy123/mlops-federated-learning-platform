@@ -1,3 +1,7 @@
+> **⚠️ Proprietary — All Rights Reserved.** © 2026 Sandeep Grover. This repository is licensed to Sandeep Grover and may **not** be used, run, copied, modified, distributed, or used to train models without prior written permission. Public visibility does not grant a license. See [LICENSE](LICENSE).
+
+---
+
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![MLOps](https://img.shields.io/badge/MLOps-federated-purple) ![Docker](https://img.shields.io/badge/Docker-containerised-blue) ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 # MLOps + Federated Learning Platform — Werkstatt AI Capstone
